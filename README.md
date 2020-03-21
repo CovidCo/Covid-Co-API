@@ -12,6 +12,8 @@ You need nodejs and npm installed on your machine
 
 If you want to deploy this please configure a Firebase Application
 
+We are using postgreSql for this project
+
 
 ### Installing
 
@@ -21,6 +23,17 @@ Just clone this code and install de dependencies
 ``` bash
 # install dependencies
 npm install
+
+```
+
+configure your db connection - set the config variables 
+
+``` bash
+
+firebase functions:config:set db.host=<your-host>
+firebase functions:config:set db.user=<db_user>
+firebase functions:config:set db.password=<password>
+firebase functions:config:set db.db_name=<your_db_name>
 
 ```
 
@@ -41,7 +54,6 @@ TBD
 
 
 ``` bash
-
 # deploy to firebase
 firebase deploy --project <your-project>
 
