@@ -7,14 +7,14 @@ class DbManager {
         host: functions.config().db.host,
         user: functions.config().db.user,
         password: functions.config().db.password,
-        database: functions.config().db.db_name
+        database: functions.config().db.db_name,
       })
       this.dbClient.connect()
     }
 
-    executeTransaction(sqlStatement){
+    executeTransaction(sqlStatement, queryPayload){
       return new Promise((resolve, reject) => {
-        this.dbClient.query(sqlStatement).then((res) => {
+        this.dbClient.query(sqlStatement, queryPayload).then((res) => {
           console.log(res)
           resolve(res)
         }).catch((e) => {
