@@ -1,17 +1,9 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const express = require('express');
-const cors = require('cors');
+const reports = require('./apis/reports')
+const cases = require('./apis/cases')
+
 admin.initializeApp();
 
-const app = express();
-// Automatically allow cross-origin requests
-app.use(cors({ origin: true }));
-
-app.post('/', async (req, res) =>{
-  let reqBody = req.body
-  res.status(200).json({'data': reqBody })
-})
-
-
-exports.contacts = functions.https.onRequest(app)
+exports.cases = functions.https.onRequest(cases)
+exports.reports = functions.https.onRequest(reports)
