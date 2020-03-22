@@ -6,8 +6,8 @@ let getCurrentDate = () => {
 }
 
 let parseDate = (inputDate) => {
-  const momentTZ = moment(inputDate).tz("America/Bogota")
-  return momentDate = momentTZ.format("YYYY-MM-DD HH:mm:ss");
+  console.log('input date: ' + inputDate)
+  return  moment(inputDate, 'DD/MM/YYYY', true)
 }
 
 module.exports = {

@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const {saveHomeReport} = require('../models/report')
+const {saveHomeReport} = require('../models/home_report')
 
 const app = express();
 // Automatically allow cross-origin requests

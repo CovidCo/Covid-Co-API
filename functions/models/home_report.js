@@ -1,8 +1,7 @@
 const DbManager = require('../utils/db_manager')
 const {getCurrentDate, parseDate} = require('../utils/date_manager')
 const TABLE_NAME = "home_reports"
-
-const homeReportEntity = {email: "", city: "", lat: 0, lng: 0, home_at: "" , created_at: getCurrentDate()}
+const homeReportEntity = {email: "", city: "", place_id: "", home_at: "" , created_at: getCurrentDate()}
 
 let getFieldsList = (baseEntity) => {
   let data = []
@@ -20,7 +19,7 @@ let parseEntity = (homeReportPayload) => {
     Object.keys(homeReportPayload).forEach(function(key) {
       if (key in baseEntity){
         if (key == 'home_at'){
-          baseEntity['home_at'] = parseDate(baseEntity['home_at'])
+          baseEntity['home_at'] = parseDate(homeReportPayload['home_at'])
         } else {
           baseEntity[key] = homeReportPayload[key]
         }
@@ -34,7 +33,8 @@ let saveHomeReport = (homeReportPayload) => {
   let homeReportEntity = parseEntity(homeReportPayload)
   let transactionData = getFieldsList(homeReportEntity)
   const insertCommand = `INSERT INTO ${TABLE_NAME} (${transactionData['columns'].toString()})
-    VALUES ($1, $2, $3, $4, $5, $6);`
+    VALUES ($1, $2, $3, $4, $5);`
+   console.log(transactionData)
   return new Promise((resolve, reject) => {
     dbManager.executeTransaction(insertCommand, transactionData['data']).then((response) => {
       console.log(response)
