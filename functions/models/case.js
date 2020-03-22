@@ -2,9 +2,9 @@ const DbManager = require('../utils/db_manager')
 const {getCurrentDate} = require('../utils/date_manager')
 const TABLE_NAME = "cases"
 
-const caseEntity = { temperature: false, cough: false, sore: false, breathing: false, fatigue: false, diarrhea: false,
-  travel: false, health_worker: false, personal_contact: false, name: "", phone_number: "", city: "",
-  age: false, neighborhood: "", created_at: getCurrentDate() }
+const caseEntity = { fever: false, cough: false, sore: false, breathing: false, fatigue: false, diarrhea: false,
+  travel: false, health_worker: false, personal_contact: false, terms_and_conditions: false, gender: "",
+  name: "", phone_number: "", city: "", age: false, pain: false, neighborhood: "", created_at: getCurrentDate() }
 
 let getFieldsList = (baseEntity) => {
   let data = []
@@ -37,21 +37,22 @@ let saveCase = (casePayload) => {
   let dbManager = new DbManager()
   let caseEntity = parseEntity(casePayload)
   let transactionData = getFieldsList(caseEntity)
-  let caseInfo = null
-  console.log(transactionData)
   const insertCommand = `INSERT INTO ${TABLE_NAME} (${transactionData['columns'].toString()}) VALUES
-    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);`
-  console.log(insertCommand)
-  console.log(caseEntity)
-  console.log(transactionData)
-  dbManager.executeTransaction(insertCommand, transactionData['data']).then((response) => {
-    console.log(response)
-    caseInfo = response
-}).catch((e) => {
-    console.log(e)
-    caseInfo = {'error': 'error creating case'}
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18);`
+  return new Promise((resolve, reject) => {
+    dbManager.executeTransaction(insertCommand, transactionData['data']).then((response) => {
+      console.log(response)
+      console.log(response['rowCount'])
+      if (response['rowCount'] == 1){
+        resolve({'message': 'case generated', 'status_code': 200})
+      } else {
+        reject({'message': 'row not affected', 'status_code': 500})
+      }
+    }).catch((e) => {
+      console.log(e)
+      resolve({'message': 'error creating case', 'status_code': 500})
+    })
   })
-  return caseInfo
 }
 
 let getCase = (casePayload) => {
