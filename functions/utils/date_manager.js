@@ -1,11 +1,16 @@
 const moment = require('moment-timezone')
 
-const momentTZ = moment().tz("America/Bogota")
-
 let getCurrentDate = () => {
-return momentDate = momentTZ.format("YYYY-MM-DD HH:mm:ss");
+  const momentTZ = moment().tz("America/Bogota")
+  return momentDate = momentTZ.format("YYYY-MM-DD HH:mm:ss");
+}
+
+let parseDate = (inputDate) => {
+  const momentTZ = moment(inputDate).tz("America/Bogota")
+  return momentDate = momentTZ.format("YYYY-MM-DD HH:mm:ss");
 }
 
 module.exports = {
-  getCurrentDate
+  getCurrentDate,
+  parseDate
 }

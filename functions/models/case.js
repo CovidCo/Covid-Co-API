@@ -68,6 +68,5 @@ let getCase = (casePayload) => {
 }
 
 module.exports = {
-  parseEntity,
   saveCase
 }
