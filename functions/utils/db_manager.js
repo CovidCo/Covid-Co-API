@@ -23,6 +23,19 @@ class DbManager {
         })
       })
     }
+
+    executeQuery(sqlQuery){
+      return new Promise((resolve, reject) => {
+        this.dbClient.query(sqlQuery).then((res) => {
+          console.log(res)
+          resolve(res)
+        }).catch((e) => {
+          console.error(e.stack)
+          reject(e)
+        })
+      })
+    }
+
 }
 
 module.exports = DbManager

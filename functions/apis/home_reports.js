@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const {saveHomeReport} = require('../models/home_report')
+const {saveHomeReport, getCounter} = require('../models/home_report')
 
 const app = express();
 // Automatically allow cross-origin requests
@@ -24,5 +24,14 @@ app.post('/', async (req, res) =>{
     res.status(error['status_code']).json({'data': error['message']})
   })
 })
+
+app.get('/counter', async (req, res) =>{
+  getCounter().then((response) =>{
+    res.status(response['status_code']).json({'data': {'home_reports': response['counter']}})
+  }).catch((error) => {
+    res.status(error['status_code']).json({'data': {'home_reports': error['counter']}})
+  })
+})
+
 
 module.exports = app

@@ -51,7 +51,23 @@ let saveHomeReport = (homeReportPayload) => {
   })
 }
 
+let getCounter = () => {
+  let dbManager = new DbManager()
+  const selectCommand = `SELECT COUNT(*) FROM ${TABLE_NAME};`
+  return new Promise((resolve, reject) => {
+  dbManager.executeQuery(selectCommand).then((response) => {
+      const counter = response['rows'][0]['count']
+      resolve({'counter': counter, 'status_code': 200})
+    }).catch((e) => {
+      console.log(e)
+      resolve({'counter': 0, 'status_code': 500})
+    })
+  })
+}
+
+
 module.exports = {
-  saveHomeReport
+  saveHomeReport,
+  getCounter
 }
 
