@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const {saveHomeReport, getCounter} = require('../models/home_report')
+const {getHomeReportByPlaceId} = require('../models/chart')
 
 const app = express();
 // Automatically allow cross-origin requests
@@ -33,5 +34,12 @@ app.get('/counter', async (req, res) =>{
   })
 })
 
+app.get('/statistics/place_id', async (req, res) => {
+  getHomeReportByPlaceId().then((data) => {
+    res.status(200).json({'data': {'home_reports': data}})
+  }).catch((e) => {
+    res.status(500).json({'data': {'home_reports': 'could not catch information'}})
+  })
+})
 
 module.exports = app
