@@ -40,7 +40,6 @@ let getHomeReportByPlaceId = () => {
       result.forEach(function(item) {
         cityCounter[item.get('city')] = item.get('cityCount')
       })
-      sequelizeConnection.close()
       resolve(cityCounter)
     }).catch((e) => {
       reject(null)
