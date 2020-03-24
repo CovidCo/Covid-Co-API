@@ -1,8 +1,39 @@
-const DbManager = require('../utils/db_manager')
 const {getCurrentDate, parseDate} = require('../utils/date_manager')
+const sequelizeConnector = require('../utils/orm_manager')
+const { Sequelize, DataTypes, Model } = require('sequelize');
 const TABLE_NAME = "home_reports"
+const sequelizeConnection = sequelizeConnector()
+const HomeReport  = sequelizeConnection.define('HomeReport', {
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true
+    },
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: false
+    },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    homeAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    createdAt: {
+      type: DataTypes.DATE
+    },
+    placeId: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  }, {
+    tableName: TABLE_NAME
+});
 const homeReportEntity = {email: "", city: "", place_id: "", home_at: "" , created_at: getCurrentDate()}
 
+// utils
 let getFieldsList = (baseEntity) => {
   let data = []
   let columns = []
@@ -28,46 +59,52 @@ let parseEntity = (homeReportPayload) => {
     return baseEntity
 }
 
+// business logic
+
+let getHomeReportByPlaceId = () => {
+  return new Promise((resolve, reject) => {
+    HomeReport.findAll({
+      attributes: ['city', [Sequelize.fn('COUNT', 'place_id'), 'cityCount']], group: ["place_id"]
+    }).then(function (result) {
+      let cityCounter = {}
+      result.forEach(function(item) {
+        cityCounter[item.get('city')] = item.get('cityCount')
+      })
+      resolve(cityCounter)
+    }).catch((e) => {
+      reject(null)
+      console.log(e)
+    });
+  })
+}
+
+let getHomeReportCount= () => {
+  return new Promise((resolve, reject) => {
+    HomeReport.count().then(people => {
+      resolve(people)
+    }).catch((e) => {
+      console.log(e)
+      reject(0)
+    })
+  })
+}
+
 let saveHomeReport = (homeReportPayload) => {
   let dbManager = new DbManager()
   let homeReportEntity = parseEntity(homeReportPayload)
-  let transactionData = getFieldsList(homeReportEntity)
-  const insertCommand = `INSERT INTO ${TABLE_NAME} (${transactionData['columns'].toString()})
-    VALUES ($1, $2, $3, $4, $5);`
-   console.log(transactionData)
   return new Promise((resolve, reject) => {
-    dbManager.executeTransaction(insertCommand, transactionData['data']).then((response) => {
-      console.log(response)
-      console.log(response['rowCount'])
-      if (response['rowCount'] == 1){
-        resolve({'message': 'home report generated', 'status_code': 200})
-      } else {
-        reject({'message': 'row not affected', 'status_code': 500})
-      }
-    }).catch((e) => {
-      console.log(e)
+    HomeReport.create(homeReportEntity).then(homeReport => {
+      console.log(homeReport)
+      resolve({'message': 'home report generated', 'status_code': 200})
+    }).catch((error) => {
       resolve({'message': 'error creating home report', 'status_code': 500})
-    })
-  })
+    });
+  });
 }
-
-let getCounter = () => {
-  let dbManager = new DbManager()
-  const selectCommand = `SELECT COUNT(*) FROM ${TABLE_NAME};`
-  return new Promise((resolve, reject) => {
-  dbManager.executeQuery(selectCommand).then((response) => {
-      const counter = response['rows'][0]['count']
-      resolve({'counter': counter, 'status_code': 200})
-    }).catch((e) => {
-      console.log(e)
-      resolve({'counter': 0, 'status_code': 500})
-    })
-  })
-}
-
 
 module.exports = {
-  saveHomeReport,
-  getCounter
+  getHomeReportByPlaceId,
+  getHomeReportCount,
+  saveHomeReport
 }
 
