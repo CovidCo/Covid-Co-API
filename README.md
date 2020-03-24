@@ -38,6 +38,7 @@ firebase functions:config:set db.db_name=<your_db_name>
 
 firebase functions:config:set aws.access_key_id=<your_aws_key>
 firebase functions:config:set aws.secret_access_key=<your_secret_access_key>
+firebase functions:config:set aws.phone_number=<your_phone_number>
 ```
 
 

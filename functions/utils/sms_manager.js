@@ -3,10 +3,11 @@ const functions = require('firebase-functions');
 // keys
 const accessKeyId = functions.config().aws.access_key_id
 const secretAccessKey =  functions.config().aws.secret_access_key
+const phoneNumber = functions.config().aws.phone_number
 
-let deliverMessage = async (phoneNumber) => {
+let deliverMessage = async () => {
     var params = {
-        Message: 'Hola, se ha generado un nuevo caso',
+        Message: 'Hola, se ha generado un nuevo caso en covid19co.org',
         PhoneNumber: '+' + phoneNumber.toString()
     };
     var messageAttributes = {
