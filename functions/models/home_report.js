@@ -17,19 +17,20 @@ const HomeReport  = sequelizeConnection.define('HomeReport', {
       type: DataTypes.STRING,
       allowNull: false
     },
-    homeAt: {
+    home_at: {
       type: DataTypes.DATE,
       allowNull: false
     },
-    createdAt: {
+    created_at: {
       type: DataTypes.DATE
     },
-    placeId: {
+    place_id: {
       type: DataTypes.STRING,
       allowNull: false
     }
   }, {
-    tableName: TABLE_NAME
+    tableName: TABLE_NAME,
+    timestamps: false,
 });
 const homeReportEntity = {email: "", city: "", place_id: "", home_at: "" , created_at: getCurrentDate()}
 
@@ -64,7 +65,7 @@ let parseEntity = (homeReportPayload) => {
 let getHomeReportByPlaceId = () => {
   return new Promise((resolve, reject) => {
     HomeReport.findAll({
-      attributes: ['city', [Sequelize.fn('COUNT', 'place_id'), 'cityCount']], group: ["place_id"]
+      attributes: ['place_id', 'city', [Sequelize.fn('COUNT', 'place_id'), 'cityCount']], group: ["place_id", "city"]
     }).then(function (result) {
       let cityCounter = {}
       result.forEach(function(item) {
@@ -80,23 +81,23 @@ let getHomeReportByPlaceId = () => {
 
 let getHomeReportCount= () => {
   return new Promise((resolve, reject) => {
-    HomeReport.count().then(people => {
-      resolve(people)
+    HomeReport.count().then((people) => {
+      console.log('counter :' + people)
+      resolve({'status_code': 200, 'counter': people})
     }).catch((e) => {
-      console.log(e)
-      reject(0)
+      reject({'status_code': 500, 'counter': people})
     })
   })
 }
 
 let saveHomeReport = (homeReportPayload) => {
-  let dbManager = new DbManager()
   let homeReportEntity = parseEntity(homeReportPayload)
   return new Promise((resolve, reject) => {
     HomeReport.create(homeReportEntity).then(homeReport => {
       console.log(homeReport)
       resolve({'message': 'home report generated', 'status_code': 200})
     }).catch((error) => {
+      console.log(error)
       resolve({'message': 'error creating home report', 'status_code': 500})
     });
   });
