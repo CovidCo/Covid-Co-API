@@ -35,6 +35,9 @@ firebase functions:config:set db.user=<db_user>
 firebase functions:config:set db.password=<password>
 firebase functions:config:set db.db_name=<your_db_name>
 
+
+firebase functions:config:set aws.access_key_id=<your_aws_key>
+firebase functions:config:set aws.secret_access_key=<your_secret_access_key>
 ```
 
 
