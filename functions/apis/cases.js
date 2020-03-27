@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const {parseEntity, saveCase} = require('../models/case')
+const {saveCase, getCases} = require('../models/case')
 
 const app = express();
 // Automatically allow cross-origin requests
@@ -24,5 +24,15 @@ app.post('/', async (req, res) =>{
     res.status(error['status_code']).json({'data': error['message']})
   })
 })
+
+app.get('/', async (req, res) =>{
+  console.log(req.query)
+  getCases(req.query).then((response) =>{
+    res.status(response['status_code']).json({'data': response['counter']})
+  }).catch((error) => {
+    res.status(error['status_code']).json({'data': error['counter']})
+  })
+})
+
 
 module.exports = app
