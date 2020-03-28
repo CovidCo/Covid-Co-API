@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const {saveCase, getCasesCount, getCases} = require('../models/case')
+const {saveCase, getCasesCount, getCases, assignCase} = require('../models/case')
 
 const app = express();
 // Automatically allow cross-origin requests
@@ -31,6 +31,20 @@ app.get('/', async (req, res) =>{
   let perPage = params.per_page
   let page = params.page
   getCases(perPage, page).then((response) =>{
+    res.status(200).json({'data': response['data']})
+  }).catch((error) => {
+    res.status(500).json({'data': response['data']})
+  })
+})
+
+app.put('/:id', (req, res) => { 
+  let caseId = req.params.id
+  if (!('doctor_id' in req.body.data)){ 
+    res.status(500).json({'data': 'doctor id not present'})
+    return
+  }
+  let doctorId = req.body.data.doctor_id
+  assignCase(doctorId, caseId).then((response) =>{
     res.status(200).json({'data': response['data']})
   }).catch((error) => {
     res.status(500).json({'data': response['data']})

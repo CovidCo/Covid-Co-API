@@ -7,7 +7,7 @@ const sequelizeConnection = sequelizeConnector()
 const caseEntity = { fever: false, cough: false, sore: false, breathing: false, fatigue: false, diarrhea: false,
   travel: false, health_worker: false, personal_contact: false, terms_and_conditions: false, gender: "",
   name: "", phone_number: "", city: "", age: "", pain: false, neighborhood: "", created_at: getCurrentDate(), place_id: "",
-  status: true}
+  status: true, doctor_id: ""}
 
 const CaseReport  = sequelizeConnection.define('CaseReport', {
     fever: { type: DataTypes.BOOLEAN, allowNull: false},
@@ -30,6 +30,7 @@ const CaseReport  = sequelizeConnection.define('CaseReport', {
     age: {type: DataTypes.INTEGER, allowNull: false},
     created_at: {type: DataTypes.DATE},
     place_id: { type: DataTypes.STRING, allowNull: false},
+    doctor_id: { type: DataTypes.STRING}
   }, {
     tableName: TABLE_NAME,
     timestamps: false,
@@ -94,9 +95,29 @@ let getCases = (perPage = 1, page = 0) => {
   })
 }
 
+let assignCase = (doctorId, caseId) => {
+  return new Promise((resolve, reject) => {
+    CaseReport.update({
+      status: false,
+      doctor_id: doctorId
+    }, {
+      where: {
+        id: caseId
+      }
+    }).then((caseReport) => {
+      console.log(caseReport)
+      resolve({'message': 'case report taken', 'status_code': 200})
+    }).catch((e) => {
+      resolve({'message': 'error taking home report', 'status_code': 500})
+    })
+  });
+}
+
+
 
 module.exports = {
   saveCase,
   getCasesCount,
-  getCases
+  getCases,
+  assignCase
 }
