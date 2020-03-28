@@ -7,7 +7,7 @@ const sequelizeConnection = sequelizeConnector()
 const caseEntity = { fever: false, cough: false, sore: false, breathing: false, fatigue: false, diarrhea: false,
   travel: false, health_worker: false, personal_contact: false, terms_and_conditions: false, gender: "",
   name: "", phone_number: "", city: "", age: "", pain: false, neighborhood: "", created_at: getCurrentDate(), place_id: "",
-  status: true, doctor_id: ""}
+  status: false, doctor_id: ""}
 
 const CaseReport  = sequelizeConnection.define('CaseReport', {
     fever: { type: DataTypes.BOOLEAN, allowNull: false},
@@ -75,7 +75,7 @@ let getCases = (perPage = 1, page = 0) => {
   const offset = (perPage * page)
   return new Promise((resolve, reject) => {
     CaseReport.findAndCountAll({
-        where: { status: true},
+        where: { status: false},
         offset: offset,
         limit: perPage
     }).then(function (result) {
@@ -98,7 +98,7 @@ let getCases = (perPage = 1, page = 0) => {
 let assignCase = (doctorId, caseId) => {
   return new Promise((resolve, reject) => {
     CaseReport.update({
-      status: false,
+      status: true,
       doctor_id: doctorId
     }, {
       where: {
