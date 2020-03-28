@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const {saveCase, getCases} = require('../models/case')
+const {saveCase, getCasesCount, getCases} = require('../models/case')
 
 const app = express();
 // Automatically allow cross-origin requests
@@ -27,10 +27,13 @@ app.post('/', async (req, res) =>{
 
 app.get('/', async (req, res) =>{
   console.log(req.query)
-  getCases(req.query).then((response) =>{
-    res.status(response['status_code']).json({'data': response['counter']})
+  let params = req.query
+  let perPage = params.per_page
+  let page = params.page
+  getCases(perPage, page).then((response) =>{
+    res.status(200).json({'data': 'true'})
   }).catch((error) => {
-    res.status(error['status_code']).json({'data': error['counter']})
+    res.status(500).json({'data': 'false'})
   })
 })
 

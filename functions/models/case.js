@@ -6,7 +6,8 @@ const TABLE_NAME = "cases"
 const sequelizeConnection = sequelizeConnector()
 const caseEntity = { fever: false, cough: false, sore: false, breathing: false, fatigue: false, diarrhea: false,
   travel: false, health_worker: false, personal_contact: false, terms_and_conditions: false, gender: "",
-  name: "", phone_number: "", city: "", age: "", pain: false, neighborhood: "", created_at: getCurrentDate(), place_id: "" }
+  name: "", phone_number: "", city: "", age: "", pain: false, neighborhood: "", created_at: getCurrentDate(), place_id: "",
+  status: true}
 
 const CaseReport  = sequelizeConnection.define('CaseReport', {
     fever: { type: DataTypes.BOOLEAN, allowNull: false},
@@ -15,6 +16,7 @@ const CaseReport  = sequelizeConnection.define('CaseReport', {
     breathing: {type: DataTypes.BOOLEAN, allowNull: false},
     fatigue: {type: DataTypes.BOOLEAN, allowNull: false},
     diarrhea:{ type: DataTypes.BOOLEAN, allowNull: false},
+    status:{ type: DataTypes.BOOLEAN, allowNull: false},
     travel: { type: DataTypes.BOOLEAN, allowNull: false},
     health_worker: {type: DataTypes.BOOLEAN, allowNull: false},
     personal_contact: {type: DataTypes.BOOLEAN, allowNull: false},
@@ -57,7 +59,7 @@ let saveCase = (casePayload) => {
   });
 }
 
-let getCases = (casePayload) => {
+let getCasesCount = (casePayload) => {
   return new Promise((resolve, reject) => {
     CaseReport.count().then((cases) => {
       console.log('counter :' + cases)
@@ -68,7 +70,31 @@ let getCases = (casePayload) => {
   })
 }
 
+let getCases = (perPage = 1, page = 0) => {
+  const offset = (perPage * page)
+  return new Promise((resolve, reject) => {
+    CaseReport.findAndCountAll({
+        where: {
+          status: true
+        },
+        offset: offset,
+        limit: perPage
+    }).then(function (result) {
+      console.log('result info')
+      console.log(result)
+      console.log(result.count)
+      console.log(result.rows)
+      resolve(true)
+    }).catch((e) => {
+      console.log(e)
+      reject(null)
+    });
+  })
+}
+
+
 module.exports = {
   saveCase,
+  getCasesCount,
   getCases
 }
