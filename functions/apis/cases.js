@@ -31,9 +31,9 @@ app.get('/', async (req, res) =>{
   let perPage = params.per_page
   let page = params.page
   getCases(perPage, page).then((response) =>{
-    res.status(200).json({'data': 'true'})
+    res.status(200).json({'data': response['data']})
   }).catch((error) => {
-    res.status(500).json({'data': 'false'})
+    res.status(500).json({'data': response['data']})
   })
 })
 

@@ -74,20 +74,22 @@ let getCases = (perPage = 1, page = 0) => {
   const offset = (perPage * page)
   return new Promise((resolve, reject) => {
     CaseReport.findAndCountAll({
-        where: {
-          status: true
-        },
+        where: { status: true},
         offset: offset,
         limit: perPage
     }).then(function (result) {
-      console.log('result info')
-      console.log(result)
-      console.log(result.count)
-      console.log(result.rows)
-      resolve(true)
+      let response = {}
+      let data = []
+      response['items'] = result.count
+      result.rows.forEach((item, index) => {
+        console.log(item)
+        data.push(item)
+      })
+      response['payload'] = data
+      resolve({'data': response})
     }).catch((e) => {
       console.log(e)
-      reject(null)
+      reject({'data': {'items': 0, 'payload': []}})
     });
   })
 }
